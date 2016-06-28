@@ -3,12 +3,15 @@ CFLAGS=-c -Wall
 
 all: aes
 
-aes: aes.o aes_main.o
-	$(CC) aes_main.o aes.o -o aes
+aes: aes.o aes_client.o
+	$(CC) aes_client.o aes.o -o aes
 
 aes.o: aes.c
 	$(CC) $(CFLAGS) aes.c
 
-aes_main.o:
-	$(CC) $(CFLAGS) aes_main.c
+aes_client.o: aes_client.c
+	$(CC) $(CFLAGS) aes_client.c
 
+clean:
+	rm *.o
+	rm aes
