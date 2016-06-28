@@ -21,3 +21,15 @@ clean:
 
 aes_cmac.o: aes_cmac.c aes_cmac.h
 	$(CC) $(CFLAGS) aes_cmac.c
+
+signature: sha256.o signature_client.o hmac.o
+	$(CC) sha256.o signature_client.o hmac.o -o signature_client
+
+sha256.o: sha256.h sha256.c
+	$(CC) $(CFLAGS) sha256.c
+
+hmac.o: hmac.c hmac.h
+	$(CC) $(CFLAGS) hmac.c
+
+signature_client.o: signature_client.c
+	$(CC) $(CFLAGS) signature_client.c

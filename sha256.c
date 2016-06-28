@@ -1,5 +1,5 @@
 #include "sha256.h"
-#include "stdio.h"
+// #include "stdio.h"
 
 #define ROTR(x,n)   (((x) >> n) | ((x) << (32 - n)))
 
@@ -43,10 +43,10 @@ void sha256_update(sha256_ctx_t *ctx, uint8_t *message, uint32_t len)
     {
         ctx->buf[ctx->buf_len] = message[i];
         ctx->buf_len++;
-        if(ctx->buf_len == 64)  //a chunk is ready
+        if(ctx->buf_len == SHA256_BLOCK_SIZE)  //a chunk is ready
         {
             compress(ctx);
-            bit_len_add(ctx, 64 * 8);
+            bit_len_add(ctx, SHA256_BLOCK_SIZE * 8);
             ctx->buf_len = 0;
         }
     }

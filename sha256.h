@@ -5,6 +5,9 @@
 #include <string.h>
 #include <stdint.h>
 
+#define SHA256_BLOCK_SIZE  64
+#define SHA256_HASH_LEN 32
+
 typedef struct {
     uint8_t buf[64];   //512bit chunks
     uint32_t state[8];   //256bit hash value
