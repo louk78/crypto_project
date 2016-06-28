@@ -252,6 +252,26 @@ static void key_expansion(aes_ctx_t *ctx, int current_key_size, int required_key
     }
 }
 
+//rotate(0x12345678) -> 0x34567812
+static void inline rotate(uint8_t *word)
+{
+    uint8_t c;
+    c = word[0];
+    word[0] = word[1];
+    word[1] = word[2];
+    word[2] = word[3];
+    word[3] = c;
+}
+
+//core function for key_expansion
+static void key_expansion_core(uint8_t *word, int iteration)
+{
+    int i;
+    rotate(word);
+    for (i = 0; i < 4; ++i)
+        word[i] = sbox[word[i]];
+    word[0] ^= rcon[iteration];
+}
 
 static void sub_bytes(aes_ctx_t *ctx)
 {
@@ -367,12 +387,10 @@ static void add_roundkey(aes_ctx_t *ctx, int current_round)
             ctx->state[i][j] ^= ctx->roundkey[current_round * AES_BLOCKSIZE + j * 4 + i];
 }
 
-/*
-* Helper functions
-*/
 
 #define xtime(x)   ((x<<1) ^ (((x>>7) & 1) * 0x1b))
 
+//multiply in GF(2^8)
 static uint8_t multiply(uint8_t a, uint8_t b) {
    int i;
 
@@ -387,27 +405,6 @@ static uint8_t multiply(uint8_t a, uint8_t b) {
       d = xtime(d);
    }
    return c;
-}
-
-//rotate(0x12345678) -> 0x34567812
-static void inline rotate(uint8_t *word)
-{
-    uint8_t c;
-    c = word[0];
-    word[0] = word[1];
-    word[1] = word[2];
-    word[2] = word[3];
-    word[3] = c;
-}
-
-//core function for key_expansion
-static void key_expansion_core(uint8_t *word, int iteration)
-{
-    int i;
-    rotate(word);
-    for (i = 0; i < 4; ++i)
-        word[i] = sbox[word[i]];
-    word[0] ^= rcon[iteration];
 }
 
 static void print_hex(uint8_t *ptr, int len)
