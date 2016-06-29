@@ -7,10 +7,11 @@
 #include "aes_cbc.h"
 #include "aes_cmac.h"
 
-char teststring[] = "If someone loves a flower, of which just one single blossom grows in all the millions and \
-millions of stars, it is enough to make him happy just to look at the stars. He can say to \
-himself, \"Somewhere, my flower is there...\" But if the sheep eats the flower, in one moment \
-all his stars will be darkened... And you think that is not important!";
+char teststring[] = "If someone loves a flower, of which just one single blossom \
+grows in all the millions and millions of stars, it is enough to make him \
+happy just to look at the stars. He can say to himself, \"Somewhere, my \
+flower is there...\" But if the sheep eats the flower, in one moment all his \
+stars will be darkened... And you think that is not important!";
 
 static void print_hex(uint8_t *ptr, int len)
 {
@@ -97,6 +98,7 @@ void aes_cmac_test()
     puts("\n*********AES-CMAC**********");
     aes_cmac(input, strlen(input), key, mac);
     printf("message:\n%s\n", input);
+    printf("key: %s\n", key);
     printf("CMAC result:\n");
     print_hex(mac, 16);
 }
