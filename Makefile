@@ -18,7 +18,6 @@ aes_cbc.o: aes_cbc.c aes_cbc.h
 clean:
 	rm *.o
 	rm aes_client
-	rm bignum_test
 	rm signature_client
 
 aes_cmac.o: aes_cmac.c aes_cmac.h
