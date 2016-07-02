@@ -23,6 +23,8 @@ void bignum_fromstring(bignum* b, char* string);
 char * bignum_tostring(bignum* b);
 void bignum_copy(bignum* source, bignum* dest);
 
+void bignum_random(int bytes, bignum *result);
+
 //compare & testing
 int bignum_iszero(bignum* b);
 int bignum_isodd(bignum *b);
@@ -42,7 +44,7 @@ void bignum_imultiply(bignum* source, bignum* add);
 void bignum_multiply(bignum* result, bignum* b1, bignum* b2);
 void bignum_idivide(bignum* source, bignum* div);
 void bignum_idivide_2(bignum *source);
-void bignum_idivider(bignum* source, bignum* div, bignum* remainder);
+// void bignum_idivider(bignum* source, bignum* div, bignum* remainder);
 void bignum_mod(bignum* source, bignum *div, bignum* remainder);
 void bignum_imod(bignum* source, bignum* modulus);
 void bignum_divide(bignum* quotient, bignum* remainder, bignum* b1, bignum* b2);

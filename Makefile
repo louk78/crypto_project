@@ -43,4 +43,4 @@ bignum_test: bignum_test.c bignum.o
 	$(CC) bignum_test.c bignum.o -o bignum_test
 
 ras.o: rsa.c rsa.h
-	$(CC) $(CFLAGS) rsa.h
+	$(CC) $(CFLAGS) rsa.c

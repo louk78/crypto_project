@@ -27,7 +27,7 @@ static uint32_t DATA8[1] = {8};
 static uint32_t DATA9[1] = {9};
 static uint32_t DATA10[1] = {10};
 
-static bignum NUMS[11] = {{1, 1, DATA0},{1, 1, DATA1},{1, 1, DATA2},
+bignum NUMS[11] = {{1, 1, DATA0},{1, 1, DATA1},{1, 1, DATA2},
                    {1, 1, DATA3},{1, 1, DATA4},{1, 1, DATA5},
                    {1, 1, DATA6},{1, 1, DATA7},{1, 1, DATA8},
                    {1, 1, DATA9},{1, 1, DATA10}};
@@ -114,6 +114,22 @@ int bignum_isgeq(bignum* b1, bignum* b2)
 int bignum_isleq(bignum* b1, bignum* b2)
 {
 	return !bignum_isgreater(b1, b2);
+}
+
+//generate a random number of given bytes
+void bignum_random(int bytes, bignum *result)
+{
+    int i;
+    result->length = bytes / 4;
+    if(result->capacity < bytes / 4)
+    {
+        result->capacity = bytes / 4;
+        result->data = realloc(result->data, sizeof(uint32_t) * result->capacity);
+    }
+    for(i = 0; i < bytes/4; i++)
+    {
+        result->data[i] = rand();
+    }
 }
 
 //add two bignums in place
@@ -535,7 +551,7 @@ char * bignum_tostring(bignum* b)
             buffer[i] = buffer[len - i - 1];
             buffer[len - i - 1] = tmp;
         }
-
+        buffer[len] = '\0';
         bignum_free(copy);
         bignum_free(remainder);
 	}
