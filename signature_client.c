@@ -7,6 +7,7 @@
 #include "hmac.h"
 #include "rsa.h"
 #include "bignum.h"
+#include "sign.h"
 
 
 char message[] = "If someone loves a flower, of which just one single blossom \
@@ -86,30 +87,12 @@ void rsa_key_gen_test()
 
 void rsa_signature_test()
 {
-    int len;
-    uint8_t hash[SHA256_HASH_LEN];
-    char *strhash;
-    sha256_ctx_t ctx;
-    sha256_init(&ctx);
-
-    char signature[2048], tmp[2048];
-
-    len = strlen(message);
-    sha256_update(&ctx, message, len);
-    sha256_finish(&ctx, hash);
-
-    printf("************RSA Sigature*************\n");
-    //signing
-    strhash = rsa_bin2dec(hash, SHA256_HASH_LEN);
-    printf("Hash value (in dec):\n%s\n", strhash);
-
-    rsa_encrypt(signature, strhash, strlen(strhash), n, d);
-    printf("Signature result:\n%s\n", signature);
-
-    //verify
-    rsa_encrypt(tmp, signature, strlen(signature), n, e);
-    printf("Decrypted Hash value:\n%s\n", tmp);
-    if(strcmp(tmp, strhash) == 0)
+    char *signature;
+    int match;
+    puts("************RSA Sigature*************");
+    signature = sign(message, strlen(message), n, d);
+    match = verify(message, strlen(message), n, e, signature);
+    if(match)
         puts("match!");
     else
         puts("no match!");

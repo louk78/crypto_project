@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-c -Wall
 
-all: aes
+all: aes signature
 
 aes: aes.o aes_client.o aes_cbc.o aes_cmac.o
 	$(CC) aes_client.o aes.o aes_cbc.o aes_cmac.o -o aes_client
@@ -24,8 +24,8 @@ clean:
 aes_cmac.o: aes_cmac.c aes_cmac.h
 	$(CC) $(CFLAGS) aes_cmac.c
 
-signature: sha256.o signature_client.o hmac.o bignum.o rsa.o
-	$(CC) sha256.o signature_client.o hmac.o rsa.o bignum.o -o signature_client
+signature: sha256.o signature_client.o hmac.o bignum.o rsa.o sign.o
+	$(CC) sha256.o signature_client.o hmac.o rsa.o bignum.o sign.o -o signature_client
 
 sha256.o: sha256.h sha256.c
 	$(CC) $(CFLAGS) sha256.c
@@ -44,3 +44,6 @@ bignum_test: bignum_test.c bignum.o
 
 ras.o: rsa.c rsa.h
 	$(CC) $(CFLAGS) rsa.c
+
+sign.o: sign.c sign.h
+	$(CC) $(CFLAGS) sign.c
