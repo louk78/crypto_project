@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include "bignum.h"
 
-char *stra = "122132321387198381245222221111678";
+char *stra = "1221323213871983878";
 char *strb = "9821231821382178271832173765453";
 
 int main()
@@ -26,6 +26,9 @@ int main()
     free(resultb);
 
     bignum_multiply(c, a, b);
+    puts(bignum_tostring(c));
+
+    bignum_subtract(c, a, b);
     puts(bignum_tostring(c));
 
     bignum_divide(d, e, a, b);

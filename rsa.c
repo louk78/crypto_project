@@ -43,6 +43,7 @@ static void gcd(bignum *b1, bignum *b2, bignum *result)
     bignum_copy(a, result);
 }
 
+/*
 void xgcd(bignum* a, bignum* mod, bignum* result)
 {
 	bignum *remprev = bignum_alloc(), *rem = bignum_alloc();
@@ -75,6 +76,51 @@ void xgcd(bignum* a, bignum* mod, bignum* result)
 	bignum_free(aux); bignum_free(rcur); bignum_free(qcur);
 	bignum_free(acur); bignum_free(one);
 }
+*/
+
+//modified extended Euclidean algorithm from Knuth [KNU298, Vol 2 Algorithm X p 342]
+//avoiding negative integers.
+void modular_inverse(bignum* a, bignum* mod, bignum* result)
+{
+    bignum *u1 = bignum_alloc();
+    bignum *u3 = bignum_alloc();
+    bignum *v1 = bignum_alloc();
+    bignum *v3 = bignum_alloc();
+    bignum *t1 = bignum_alloc();
+    bignum *t3 = bignum_alloc();
+    bignum *q = bignum_alloc();
+
+    int iter=1;
+    bignum_fromint(u1, 1);
+    bignum_copy(a, u3);
+    bignum_copy(mod, v3);
+
+    while (!bignum_iszero(v3))
+    {
+        bignum_divide(q, t3, u3, v3);
+        bignum_imultiply(q, v1);
+        bignum_add(t1, u1, q);
+
+        bignum_copy(v1, u1);
+        bignum_copy(t1, v1);
+        bignum_copy(v3, u3);
+        bignum_copy(t3, v3);
+
+        iter = -iter;
+    }
+    if (iter < 0)
+        bignum_subtract(result, mod, u1);
+    else
+        bignum_copy(u1, result);
+    bignum_free(t1);
+    bignum_free(u1);
+    bignum_free(v1);
+    bignum_free(v3);
+    bignum_free(t3);
+    bignum_free(u3);
+    bignum_free(q);
+}
+
 
 //find result < upper such that gcd(result, phi)==1
 static void random_exponent(bignum *phi, uint32_t upper, bignum *result)
@@ -217,8 +263,6 @@ void rsa_generate_key_pair(char *ns, char *ds, char *es, char *phis, int bytes)
     phi = bignum_alloc();
 
     bignum_fromint(one, 1);
-    // random_prime(bytes, p);
-    // random_prime(bytes, q);
     random_prime(bytes, p);
     print_bignum("p", p);
     random_prime(bytes, q);
@@ -230,7 +274,7 @@ void rsa_generate_key_pair(char *ns, char *ds, char *es, char *phis, int bytes)
     bignum_multiply(phi, p, q);
 
     random_exponent(phi, EXPONENT_MAX, e);
-    xgcd(phi, e, d);
+    modular_inverse(e, phi, d);
 
     buf = bignum_tostring(n);
     strcpy(ns, buf); free(buf);
@@ -245,6 +289,7 @@ void rsa_generate_key_pair(char *ns, char *ds, char *es, char *phis, int bytes)
     }
     bignum_free(p); bignum_free(n); bignum_free(d);
     bignum_free(q); bignum_free(e); bignum_free(phi);
+    bignum_free(one);
 }
 
 void rsa_encrypt(char *result, char *plaintext, int bytes, char *modulus, char *exponent)
@@ -310,6 +355,7 @@ char * rsa_bin2dec(uint8_t *bin, int bytes)
     return s;
 }
 
+/*
 void test1()
 {
     bignum *s;
@@ -319,3 +365,18 @@ void test1()
     printf("%d\n", miller_rabin_test(s, 30));
     bignum_free(s);
 }
+*/
+
+/*
+int main()
+{
+    bignum *a = bignum_alloc();
+    bignum *q = bignum_alloc();
+    bignum *inv = bignum_alloc();
+    bignum_fromstring(a, "5370702670177023357401198310401014925440001998254581061067882702546083975820467325803176536972583529046575157542254922963861667552601010631836478246909136859790891031240313975899931659373997627468479745588743233740231321214180408099897847114606064671860223946420243996731490198422261789694999790565839515281024770870764105086818848319762638885566100900975823570599688742835848176989452563188758222004735494633988600280094096160414100491691513358805586795182152183430254174163313220405487051847310519011871605356430320158997573187097059463514867880382134916538530386331818970560882451465000858533260840120529939745216");
+    bignum_fromint(q, 1331748509);
+    modular_inverse(q, a, inv);
+    print_bignum("inv", inv);
+    return 0;
+}
+*/

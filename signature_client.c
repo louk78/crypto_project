@@ -102,7 +102,7 @@ int main()
 {
     sha256_test();
     hmac_sha256_test();
-    // rsa_key_gen_test();
+    rsa_key_gen_test();
     rsa_signature_test();
     return 0;
 }
