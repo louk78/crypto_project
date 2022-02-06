@@ -103,10 +103,41 @@ void aes_cmac_test()
     print_hex(mac, 16);
 }
 
+void aes_cmac_can_test()
+{
+    unsigned char key_auth[16] = {0x30, 0xC1, 0x37, 0xAA, 0x33, 0x85, 0xDE, 0x39, 0x07, 0xB3, 0x09, 0x4B, 0x03, 0x0C, 0xFD, 0x30};
+	
+    unsigned char out_mac[16];
+    unsigned char pdu_in[18] = {0x03, 0x51, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x00, 0x00, 0x16, 0x00, 0x01, 0x00, 0x00, 0x35};
+    aes_cmac(pdu_in, sizeof(pdu_in), key_auth, out_mac);
+    print_hex(out_mac, 16);
+}
+
+void aes_cbc_test()
+{
+    unsigned char aes_key[16] = {0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01};
+    unsigned char aes_iv[16] = {0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02};
+    char in[128] = "123456789agdugyasdgfyagsdvsdayfadfakdfggyu";
+    unsigned char out[128];
+    char tmp[128];
+    int out_len;
+    int tmp_len;
+
+    memset(out, 0, sizeof(out));
+    memset(tmp, 0, sizeof(tmp));
+
+    out_len = AES_CBC_encrypt(in, out, strlen(in), aes_key, 16, aes_iv);
+    print_hex(out, out_len);
+    AES_CBC_decrypt(out, tmp, out_len, aes_key, 16, aes_iv);
+    printf("%s\n", tmp);
+}
+
 int main()
 {
-    aes_128_test();
+    //aes_128_test();
     // aes_256_test();
-    aes_128_cbc_test();
-    aes_cmac_test();
+    //aes_128_cbc_test();
+    //aes_cmac_test();
+    aes_cbc_test();
+    aes_cmac_can_test();
 }
