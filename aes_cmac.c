@@ -16,7 +16,7 @@ void aes_cmac(uint8_t *input, unsigned long length, uint8_t *key, uint8_t *mac_v
 {
     uint8_t subkey_1[AES_BLOCKSIZE];
     uint8_t subkey_2[AES_BLOCKSIZE];
-    uint8_t previous_block_ciphertext[AES_BLOCKSIZE] = {};
+    uint8_t previous_block_ciphertext[AES_BLOCKSIZE] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
     uint8_t temp[AES_BLOCKSIZE];
     unsigned long i;
     aes_ctx_t *aes_ctx;
@@ -30,29 +30,29 @@ void aes_cmac(uint8_t *input, unsigned long length, uint8_t *key, uint8_t *mac_v
 
 #ifdef DEBUG
         printf("Position %lx\n", i);
-        printf("M:\n");
-        print_block(input);
         printf("IV:\n");
         print_block(previous_block_ciphertext);
-#endif
-        block_xor_triple(input, previous_block_ciphertext, temp);
-
-#ifdef DEBUG
-        printf("xored with IV:\n");
-        print_block(temp);
 #endif
 
         if(i + AES_BLOCKSIZE == length)
         {
             //the last block if full, xor with subkey_1
+            memcpy(temp, input, AES_BLOCKSIZE);
             block_xor_triple(temp, subkey_1, temp);
         }
         else if(i + AES_BLOCKSIZE > length)
         {
             //last block is not full, add padding
+            memcpy(temp, input, length-i);
             add_padding(temp, length - i);
+            //print_block(temp);
             block_xor_triple(temp, subkey_2, temp);
         }
+        else
+        {
+            memcpy(temp, input, AES_BLOCKSIZE);
+        }
+        block_xor_triple(temp, previous_block_ciphertext, temp);
 
 #ifdef DEBUG
         printf("xored with key:\n");
